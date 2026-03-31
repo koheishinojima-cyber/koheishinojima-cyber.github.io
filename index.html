@@ -339,13 +339,13 @@
                 columns: ['project','category_major','category_minor','sharing','task_name','owner_internal','owner_external',
                     'status','start_date','end_date','business_days','priority','urgency','ai_eval','blocker','internal_memo','notes','meeting_ref','task_id'],
                 statusCol: 'H', memoCol: 'P', dateStartCol: 'I', dateEndCol: 'J',
-                statuses: ['🔄処理中','✅完了','❌却下'],
+                statuses: ['🔄処理中','✅承認','❌却下'],
                 laneConfig: [
                     { status: '🔄処理中', css: 'pending', icon: '🔄' },
-                    { status: '✅完了', css: 'approved', icon: '✅' },
+                    { status: '✅承認', css: 'approved', icon: '✅' },
                     { status: '❌却下', css: 'rejected', icon: '❌' },
                 ],
-                statusBadgeMap: { '🔄処理中':'pending', '✅完了':'approved', '❌却下':'rejected' },
+                statusBadgeMap: { '🔄処理中':'pending', '✅承認':'approved', '❌却下':'rejected' },
             },
         };
 
@@ -621,7 +621,7 @@
         }
 
         function statusCssClass(s) {
-            const m = {'未着手':'todo','対応中':'doing','完了':'done','🔄処理中':'pending','✅完了':'approved','❌却下':'rejected'};
+            const m = {'未着手':'todo','対応中':'doing','完了':'done','🔄処理中':'pending','✅承認':'approved','❌却下':'rejected'};
             return m[s] || 'todo';
         }
 
