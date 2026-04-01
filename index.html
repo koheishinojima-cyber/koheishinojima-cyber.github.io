@@ -354,6 +354,7 @@
         let data = { master: null, approval: null };
         let currentFilter = 'all';
         let searchQuery = '';
+        let sortMode = 'asc'; // 'asc' | 'desc' | 'none'
         const projectColors = {};
         let projectColorIdx = 0;
         let tokenClient;
@@ -524,9 +525,11 @@
         function renderFilters() {
             const d = data[currentTab]; if (!d) return;
             const toolbar = document.getElementById('toolbar');
+            const sortLabel = sortMode === 'asc' ? '📅 開始日 ↑' : sortMode === 'desc' ? '📅 開始日 ↓' : '📅 ソートなし';
             toolbar.innerHTML = `
                 <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all', this)">すべて</button>
                 ${d.projects.map(p => `<button class="filter-btn ${currentFilter === p ? 'active' : ''}" onclick="setFilter('${p.replace(/'/g,"\\'")}', this)">${p}</button>`).join('')}
+                <button class="filter-btn ${sortMode !== 'none' ? 'active' : ''}" onclick="toggleSort()" title="開始日でソート">${sortLabel}</button>
                 <input type="text" class="search-input" placeholder="🔍 タスクを検索..." value="${searchQuery}" oninput="handleSearch(this.value)">
             `;
         }
@@ -540,9 +543,16 @@
 
         function handleSearch(q) { searchQuery = q.toLowerCase(); renderBoard(); }
 
+        function toggleSort() {
+            if (sortMode === 'asc') sortMode = 'desc';
+            else if (sortMode === 'desc') sortMode = 'none';
+            else sortMode = 'asc';
+            renderAll();
+        }
+
         function getFilteredTasks() {
             const d = data[currentTab]; if (!d) return [];
-            return d.tasks.filter(t => {
+            let tasks = d.tasks.filter(t => {
                 if (currentFilter !== 'all' && t.project !== currentFilter) return false;
                 if (searchQuery) {
                     const haystack = [t.task_name, t.project, t.category_major, t.category_minor, t.owner_internal, t.meeting_ref || ''].join(' ').toLowerCase();
@@ -550,6 +560,14 @@
                 }
                 return true;
             });
+            if (sortMode !== 'none') {
+                tasks = [...tasks].sort((a, b) => {
+                    const da = a.start_date || '9999-12-31';
+                    const db = b.start_date || '9999-12-31';
+                    return sortMode === 'asc' ? da.localeCompare(db) : db.localeCompare(da);
+                });
+            }
+            return tasks;
         }
 
         function renderBoard() {
