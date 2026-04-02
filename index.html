@@ -335,17 +335,25 @@
                 statusBadgeMap: { '未着手':'todo', '対応中':'doing', '完了':'done' },
             },
             approval: {
-                name: '⏳ 承認待ち', range: 'A1:T100',
+                name: '⏳ 承認待ち', range: 'A1:T200',
                 columns: ['_empty','project','category_major','category_minor','sharing','task_name','owner_internal','owner_external',
                     'status','start_date','end_date','business_days','priority','urgency','ai_eval','blocker','internal_memo','notes','meeting_ref','task_id'],
                 statusCol: 'I', memoCol: 'Q', dateStartCol: 'J', dateEndCol: 'K',
-                statuses: ['🔄処理中','✅承認','❌却下'],
+                statuses: ['承認待ち','✅承認','❌却下'],
                 laneConfig: [
-                    { status: '🔄処理中', css: 'pending', icon: '🔄' },
+                    { status: '承認待ち', css: 'pending', icon: '⏳' },
                     { status: '✅承認', css: 'approved', icon: '✅' },
                     { status: '❌却下', css: 'rejected', icon: '❌' },
                 ],
-                statusBadgeMap: { '🔄処理中':'pending', '✅承認':'approved', '❌却下':'rejected' },
+                statusBadgeMap: { '承認待ち':'pending', '✅承認':'approved', '❌却下':'rejected' },
+                // Normalize variant status values to canonical form
+                normalizeStatus: (s) => {
+                    if (!s) return '承認待ち';
+                    if (s.includes('却下')) return '❌却下';
+                    if (s.includes('承認') && !s.includes('待ち')) return '✅承認';
+                    if (s.includes('承認待ち') || s.includes('処理中')) return '承認待ち';
+                    return s;
+                },
             },
         };
 
@@ -473,6 +481,8 @@
                         const padded = [...row, ...Array(config.columns.length - row.length).fill('')];
                         const task = { _row: i + 1 };
                         config.columns.forEach((col, j) => { task[col] = padded[j] || ''; });
+                        // Normalize status for approval sheet
+                        if (config.normalizeStatus) task.status = config.normalizeStatus(task.status);
                         tasks.push(task);
                         if (task.project) projects.add(task.project);
                     }
@@ -491,7 +501,7 @@
         function updateTabBadges() {
             if (data.master) document.getElementById('masterCount').textContent = data.master.tasks.length;
             if (data.approval) {
-                const pendingCount = data.approval.tasks.filter(t => t.status === '🔄処理中').length;
+                const pendingCount = data.approval.tasks.filter(t => t.status === '承認待ち').length;
                 document.getElementById('approvalCount').textContent = data.approval.tasks.length;
                 document.getElementById('approvalDot').style.display = pendingCount > 0 ? 'inline-block' : 'none';
             }
@@ -509,6 +519,7 @@
                         const padded = [...row, ...Array(config.columns.length - row.length).fill('')];
                         const task = { _row: i + 1 };
                         config.columns.forEach((col, j) => { task[col] = padded[j] || ''; });
+                        if (config.normalizeStatus) task.status = config.normalizeStatus(task.status);
                         tasks.push(task);
                         if (task.project) projects.add(task.project);
                     }
@@ -639,7 +650,7 @@
         }
 
         function statusCssClass(s) {
-            const m = {'未着手':'todo','対応中':'doing','完了':'done','🔄処理中':'pending','✅承認':'approved','❌却下':'rejected'};
+            const m = {'未着手':'todo','対応中':'doing','完了':'done','承認待ち':'pending','✅承認':'approved','❌却下':'rejected'};
             return m[s] || 'todo';
         }
 
