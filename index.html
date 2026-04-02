@@ -335,10 +335,10 @@
                 statusBadgeMap: { '未着手':'todo', '対応中':'doing', '完了':'done' },
             },
             approval: {
-                name: '⏳ 承認待ち', range: 'A1:S100',
-                columns: ['project','category_major','category_minor','sharing','task_name','owner_internal','owner_external',
+                name: '⏳ 承認待ち', range: 'A1:T100',
+                columns: ['_empty','project','category_major','category_minor','sharing','task_name','owner_internal','owner_external',
                     'status','start_date','end_date','business_days','priority','urgency','ai_eval','blocker','internal_memo','notes','meeting_ref','task_id'],
-                statusCol: 'H', memoCol: 'P', dateStartCol: 'I', dateEndCol: 'J',
+                statusCol: 'I', memoCol: 'Q', dateStartCol: 'J', dateEndCol: 'K',
                 statuses: ['🔄処理中','✅承認','❌却下'],
                 laneConfig: [
                     { status: '🔄処理中', css: 'pending', icon: '🔄' },
