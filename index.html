@@ -396,7 +396,15 @@
         function maybeEnableAuth() {
             if (gapiInited && gisInited) {
                 document.getElementById('authBtn').disabled = false;
-                // Check if already has valid token
+                // Restore token from sessionStorage (survives page navigation)
+                if (gapi.client.getToken() === null) {
+                    const saved = sessionStorage.getItem('gapi_token');
+                    if (saved) {
+                        try {
+                            gapi.client.setToken(JSON.parse(saved));
+                        } catch(e) { sessionStorage.removeItem('gapi_token'); }
+                    }
+                }
                 if (gapi.client.getToken() !== null) {
                     onSignedIn();
                 }
@@ -417,6 +425,7 @@
                 google.accounts.oauth2.revoke(token.access_token);
                 gapi.client.setToken('');
             }
+            sessionStorage.removeItem('gapi_token');
             document.getElementById('authOverlay').style.display = 'flex';
             document.getElementById('app').style.display = 'none';
         }
@@ -424,10 +433,11 @@
         function onSignedIn() {
             document.getElementById('authOverlay').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            // Try to show user email
+            // Persist token to sessionStorage for cross-page navigation
             try {
                 const token = gapi.client.getToken();
                 if (token) {
+                    sessionStorage.setItem('gapi_token', JSON.stringify(token));
                     fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                         headers: { Authorization: `Bearer ${token.access_token}` }
                     }).then(r => r.json()).then(u => {
