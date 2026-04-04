@@ -1,0 +1,36 @@
+{
+  "updated_at": "2026-04-05 07:17:48",
+  "count": 2,
+  "tasks": [
+    {
+      "task_id": "TK-20260401-18872",
+      "short_id": "",
+      "title": "エイベックスの取引先登録",
+      "project": "会社全般",
+      "action": "エイベックス アライアンス&バートナーズ株式会社の取引先登録をいしいゆたかに依頼する。",
+      "deadline": "2026-04-02",
+      "source": "slack",
+      "type": "external",
+      "created": "",
+      "meta": {
+        "category": "確認・承認",
+        "assignee_external": "いしいゆたか"
+      }
+    },
+    {
+      "task_id": "TK-20260403-0010",
+      "short_id": "",
+      "title": "修正3回ルール・NG項目を記載した見積書仕様書を受領し、内容を確認・合意する",
+      "project": "ウォーターチャレンジ",
+      "action": "修正3回ルール・NG項目を記載した見積書仕様書を受領し、内容を確認・合意する",
+      "deadline": "2026-04-06",
+      "source": "meeting:土田様　MTG",
+      "type": "meeting",
+      "created": "2026-04-04",
+      "meta": {
+        "category": "",
+        "assignee_external": ""
+      }
+    }
+  ]
+}
